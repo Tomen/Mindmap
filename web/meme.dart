@@ -3,37 +3,31 @@ part of mindmap;
 class Meme extends stagexl.Sprite
 {
   bool _isFocus;
-  static stagexl.Sprite _addSign; 
+  stagexl.Sprite _addSign; 
+  Mindmap _mindmap;
+  List<Relationship> _relationships;
+  
+  static final num boxWidth = 100;
+  static final num boxHeight = 60;
+  static final num boxX = -boxWidth/2;
+  static final num boxY = -boxHeight/2;
   
   Meme(Mindmap mindmap)
   { 
-    num width = 100;
-    num height = 60;
-    num x = -width/2;
-    num y = -height/2;
-    
-    if(_addSign == null){
-      _addSign = new stagexl.Sprite();
-      _addSign.graphics.rect(x + width + 5, y, 20, 20);
-      _addSign.graphics.fillColor(stagexl.Color.LightGreen);
-      _addSign.onMouseClick.listen((stagexl.MouseEvent me){
-        mindmap.addMeme(me.stageX, me.stageY + height + 5);
-        me.stopPropagation();
-      });
-    }
-    
     _isFocus = false;
+    _mindmap = mindmap;
+    _relationships = <Relationship>[];
     
     var shape = new stagexl.Shape();
-    shape.graphics.rectRound(x, y, width, height, 5, 5);
+    shape.graphics.rectRound(boxX, boxY, boxWidth, boxHeight, 5, 5);
     shape.graphics.fillColor(stagexl.Color.Red);
     addChild(shape);
     
     var textfield = new stagexl.TextField();
-    textfield.x = x + 5;
-    textfield.y = y + 5;
-    textfield.width = width - 10;
-    textfield.height = height - 10;
+    textfield.x = boxX + 5;
+    textfield.y = boxY + 5;
+    textfield.width = boxWidth - 10;
+    textfield.height = boxHeight - 10;
     textfield.multiline = true;
     textfield.text = "Hallo Hansi";
     textfield.type = stagexl.TextFieldType.INPUT;
@@ -55,12 +49,27 @@ class Meme extends stagexl.Sprite
     if(_isFocus == true && setFocus == false)
     {
       removeChild(_addSign);
+      _addSign = null;
     }
     else if(_isFocus == false && setFocus == true)
     {
+      _addSign = new stagexl.Sprite();
+        _addSign.graphics.rect(boxX + boxWidth + 5, boxY, 20, 20);
+        _addSign.graphics.fillColor(stagexl.Color.LightGreen);
+        _addSign.onMouseClick.listen((stagexl.MouseEvent me){
+          _addChildMeme();
+          me.stopPropagation();
+        });
       addChild(_addSign);
     }
     
     _isFocus = setFocus;
+  }
+  
+  List<Relationship> get relationships => _relationships;
+  
+  _addChildMeme(){
+    Meme childMeme = _mindmap.addMeme(this.x, this.y + boxHeight + 5);
+    _mindmap.addRelationship(this, childMeme);
   }
 }

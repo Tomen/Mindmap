@@ -38,7 +38,14 @@ void main() {
       num deltaX = previousX - me.stageX;
       num deltaY = previousY - me.stageY;
       draggedObject.x -= deltaX;
-      draggedObject.y -= deltaY;      
+      draggedObject.y -= deltaY;
+      
+      if(draggedObject is Meme){
+        Meme meme = draggedObject;
+        for(var relationship in meme.relationships){
+          relationship.render();
+        }
+      }
     }
     
     //MouseEvent deltaX and deltaY do not work as of now. Working around them
@@ -55,10 +62,13 @@ void main() {
 
 class Mindmap {
   stagexl.Stage _stage;
+  Mindmap _focusedMeme;
   
   Mindmap(stage){
     _stage = stage;
   }
+  
+  stagexl.Stage get stage => _stage;
   
   Meme addMeme(num x, num y){
     var meme = new Meme(this);
@@ -69,8 +79,9 @@ class Mindmap {
   }
   
   Relationship addRelationship(Meme meme1, Meme meme2){
-    Relationship relationship = new Relationship(meme1, meme2);
-    
+    Relationship relationship = new Relationship(this, meme1, meme2);
+    meme1.relationships.add(relationship);
+    meme2.relationships.add(relationship);
     return relationship;
   }
   
