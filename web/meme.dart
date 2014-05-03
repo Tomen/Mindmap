@@ -2,11 +2,10 @@ part of mindmap;
 
 class Meme extends stagexl.Sprite
 {
-  String text;
   bool _isFocus;
   static stagexl.Sprite _addSign; 
   
-  Meme()
+  Meme(Mindmap mindmap)
   { 
     num width = 100;
     num height = 60;
@@ -18,7 +17,7 @@ class Meme extends stagexl.Sprite
       _addSign.graphics.rect(x + width + 5, y, 20, 20);
       _addSign.graphics.fillColor(stagexl.Color.LightGreen);
       _addSign.onMouseClick.listen((stagexl.MouseEvent me){
-        _addMeme(me.stageX, me.stageY + height + 5);
+        mindmap.addMeme(me.stageX, me.stageY + height + 5);
         me.stopPropagation();
       });
     }
@@ -42,7 +41,7 @@ class Meme extends stagexl.Sprite
     addChild(textfield);
     
     this.onMouseClick.listen((stagexl.MouseEvent me){
-      _focusOnMeme(this);
+      mindmap.focusOnMeme(this);
       me.stopPropagation(); //make sure the event does not reach the defocus event handler
     });
         

@@ -6,33 +6,31 @@ import 'package:stagexl/stagexl.dart' as stagexl;
 part "meme.dart";
 part "relationship.dart";
 
-var stage;
 stagexl.DisplayObject draggedObject;
 num previousX;
 num previousY;
 
 void main() {
- 
-  print("hi");
-  // setup the Stage and RenderLoop
   var canvas = html.querySelector('#stage');
-  
-  stage = new stagexl.Stage(canvas);
+ 
+  stagexl.Stage stage = new stagexl.Stage(canvas);
   stage.doubleClickEnabled = true;
   var renderLoop = new stagexl.RenderLoop();
   renderLoop.addStage(stage);
-    
+  
+  Mindmap mindmap = new Mindmap(stage);
+  
   var background = new stagexl.Shape();
   background.graphics.rect(0, 0, canvas.clientWidth, canvas.clientHeight);
   background.graphics.fillColor(stagexl.Color.LightGray);
   stage.addChild(background);
 
   stage.onMouseClick.listen((me){
-    _focusOnMeme(null); //defocus current memes      
+    mindmap.focusOnMeme(null); //defocus current memes      
   });
   
   stage.onMouseDoubleClick.listen((me){
-    _addMeme(me.stageX, me.stageY);
+    mindmap.addMeme(me.stageX, me.stageY);
   });
 
   stage.onMouseMove.listen((stagexl.MouseEvent me){
@@ -50,31 +48,46 @@ void main() {
   
   stage.onMouseUp.listen((stagexl.MouseEvent me){
     draggedObject = null;
-  });
+  });  
+  
+  mindmap.addMeme(100, 100);
+}
+
+class Mindmap {
+  stagexl.Stage _stage;
+  
+  Mindmap(stage){
+    _stage = stage;
+  }
+  
+  Meme addMeme(num x, num y){
+    var meme = new Meme(this);
+    meme.x = x;
+    meme.y = y;
+    _stage.addChild(meme);  
+    return meme;
+  }
+  
+  Relationship addRelationship(Meme meme1, Meme meme2){
+    Relationship relationship = new Relationship(meme1, meme2);
     
-  _addMeme(100,100);  
-}
-
-Meme _addMeme(num x, num y){
-  var meme = new Meme();
-  meme.x = x;
-  meme.y = y;
-  stage.addChild(meme);  
-  return meme;
-}
-
-_focusOnMeme(Meme meme)
-{
-  if(stage.focus != null && stage.focus is Meme)
-  {
-    stage.focus.isFocus = false;  
+    return relationship;
   }
   
-  stage.focus = meme;
-  
-  if(meme != null)
+  focusOnMeme(Meme meme)
   {
-    meme.isFocus = true;
+    if(_stage.focus != null && _stage.focus is Meme)
+    {
+      Meme focus = _stage.focus;
+      focus.isFocus = false;  
+    }
+    
+    _stage.focus = meme;
+    
+    if(meme != null)
+    {
+      meme.isFocus = true;
+    }
   }
-}
 
+}
