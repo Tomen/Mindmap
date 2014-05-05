@@ -167,4 +167,13 @@ class EdgeRenderer {
     line.graphics.closePath();
     _mindmap.stage.addChild(line);
   }
+<<<<<<< HEAD
+=======
+  
+  _addChildNode(){
+    Node childMeme = _mindmap.addNode(this.x, this.y + boxHeight + 5);
+    _mindmap.addRelationship(this, childMeme);
+  }
+
+>>>>>>> 27e7dbb2e5a6e3a78e370674c326a18b1ad60a2a
 }
