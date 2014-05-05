@@ -5,26 +5,26 @@ class ForceDirectedGraphPhysicsSimulator {
   num stiffness;
   num repulsion;
   num damping;
-  List<Meme> nodes;
-  List<Relationship> relationships;
+  List<Node> nodes;
+  List<Edge> edges;
   
   ForceDirectedGraphPhysicsSimulator(stiffness, repulsion, damping, nodes, relationships);
 
   _applyCoulombsLaw() {
-    //foreach node
-      //foreach node
-    var point1;
-    var point2;
-     if (point1 != point2)
-     {
-       var d = point1.p.subtract(point2.p);
-       var distance = d.magnitude() + 0.1; // avoid massive forces at small distances (and divide by zero)
-       var direction = d.normalise();
+    for(Node node1 in nodes){
+      for(Node node2 in nodes) {
+        if (node1 != node2)
+        {
+          var d = node1.p.subtract(node2.p);
+          var distance = d.magnitude() + 0.1; // avoid massive forces at small distances (and divide by zero)
+          var direction = d.normalise();
 
-       // apply force to each end point
-       point1.applyForce(direction.multiply(this.repulsion).divide(distance * distance * 0.5));
-       point2.applyForce(direction.multiply(this.repulsion).divide(distance * distance * -0.5));
-     }
+          // apply force to each end point
+          node1.applyForce(direction.multiply(this.repulsion).divide(distance * distance * 0.5));
+          node2.applyForce(direction.multiply(this.repulsion).divide(distance * distance * -0.5));
+        }      
+      }
+    }
   }
 
  _applyHookesLaw() {
