@@ -7,14 +7,29 @@ stagexl.DisplayObject draggedObject;
 num previousX;
 num previousY;
 
-
 class SpringyRenderer {
   stagexl.Stage _stage;
   stagexl.Stage get stage => _stage;
   
   NodeRenderer _focusedMeme;
   
-  Graph graph;
+  Graph _graph;
+  Graph get graph => _graph;
+  set graph (graph){
+    if(_graph != null) {
+      _graph.removeGraphListener(this);
+    }
+    
+    _graph = graph;  
+
+    if(_graph != null) {
+      renderGraph();
+      _graph.addGraphListener(this);
+    }
+  }
+  
+  List<NodeRenderer> _nodeRenderers = <NodeRenderer>[];
+  List<EdgeRenderer> _edgeRenderers = <EdgeRenderer>[];
 
   SpringyRenderer(var canvas){
     
@@ -61,6 +76,31 @@ class SpringyRenderer {
     });  
   }
   
+  renderGraph() {
+    for(NodeRenderer nr in _nodeRenderers) {
+      _stage.removeChild(nr);
+    }
+    
+    for(EdgeRenderer er in _edgeRenderers) {
+      _stage.removeChild(er);
+    }
+    
+    _nodeRenderers.clear();
+    _edgeRenderers.clear();
+    
+    for(Node node in _graph.nodes) {
+      NodeRenderer nr = new NodeRenderer(node);
+      _stage.addChild(nr);
+      _nodeRenderers.add(nr);
+    }
+        
+    for(Edge edge in _graph.edges) {
+      EdgeRenderer er = new EdgeRenderer(edge);
+      _stage.addChild(er);
+      _edgeRenderers.add(er);
+    }
+  }
+  
   focusOnNode(NodeRenderer nodeRenderer)
   {
     if(_stage.focus != null && _stage.focus is NodeRenderer)
@@ -75,14 +115,14 @@ class SpringyRenderer {
     {
       nodeRenderer.isFocus = true;
     }
-  }
+  } 
 
- 
+  
 }
 
 class NodeRenderer extends stagexl.Sprite
 {    
-  //List<core.Edge> edges;  
+  Node _node;  
 
   //MindmapRenderer _mindmapRenderer;
   bool _isFocus;
@@ -93,11 +133,12 @@ class NodeRenderer extends stagexl.Sprite
   static final num boxX = -boxWidth/2;
   static final num boxY = -boxHeight/2;
   
-  NodeRenderer()//MindmapRenderer mindmapRenderer)
+  NodeRenderer(Node node)//MindmapRenderer mindmapRenderer)
   { 
     //_mindmapRenderer = mindmapRenderer;
     _isFocus = false;
     //edges = <core.Edge>[];
+    _node = node;
     
     var shape = new stagexl.Shape();
     shape.graphics.rectRound(boxX, boxY, boxWidth, boxHeight, 5, 5);
@@ -148,24 +189,22 @@ class NodeRenderer extends stagexl.Sprite
   }
 }
 
-class EdgeRenderer {
+class EdgeRenderer extends stagexl.Sprite {
   stagexl.Sprite line;
-  Edge edge;
+  Edge _edge;
   
-  EdgeRenderer(edge);
-  
-  render(){
+  EdgeRenderer(_edge) {
     if(line != null){
-      //_mindmap.stage.removeChild(line);
+      removeChild(line);
     }
     
     line = new stagexl.Sprite();
         
     line.graphics.beginPath();
-    //line.graphics.moveTo(node1.x, node1.y);
-    //line.graphics.lineTo(node2.x, node2.y);
+    //line.graphics.moveTo(_edge.source.x, source.y);
+    //line.graphics.lineTo(_edge.target.x, target.y);
     line.graphics.strokeColor(stagexl.Color.Green);
-    line.graphics.closePath();
-    //_mindmap.stage.addChild(line);
-  }
+    line.graphics.closePath(); 
+    addChild(line);
+  }  
 }

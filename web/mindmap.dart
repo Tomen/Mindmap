@@ -15,4 +15,5 @@ void main() {
   ]);
   
   SpringyRenderer renderer = new SpringyRenderer(canvas);
+  renderer.graph = graph;
 }

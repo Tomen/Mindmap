@@ -293,6 +293,10 @@ class Graph {
   addGraphListener(obj) {
     this.eventListeners.add(obj);
   }
+  
+  removeGraphListener(obj) {
+    this.eventListeners.remove(obj);
+  }
 
   notify() {
     this.eventListeners.forEach((obj) {
