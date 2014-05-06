@@ -1,10 +1,18 @@
 import 'dart:html' as html;
-import "../lib/mindmap.dart";
+import "../lib/springy_dart.dart";
+import "../lib/springy_renderer.dart";
 
 void main() {
   var canvas = html.querySelector('#stage');
  
-  Mindmap mindmap = new Mindmap();
+  Graph graph = new Graph();
    
-  mindmap.addNode(100, 100);
+  graph.addNodes(['mark', 'higgs', 'other', 'etc']);
+  graph.addEdges([
+      ['mark', 'higgs'],
+      ['mark', 'etc'],
+      ['mark', 'other']
+  ]);
+  
+  SpringyRenderer renderer = new SpringyRenderer(canvas);
 }
