@@ -78,13 +78,6 @@ class ForceDirector {
     });
   }
 
-  // callback should accept two arguments: Edge, Spring
-  eachEdge(Function fn(Edge edge, Spring spring)) {
-    _layout.graph.edges.forEach((Edge e){
-      fn(e, this.spring(e));
-    });
-  }
-
   // callback should accept one argument: Spring
   eachSpring(Function fn(Spring spring)) {
     _layout.graph.edges.forEach((Edge e){

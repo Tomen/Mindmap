@@ -90,15 +90,14 @@ class SpringyRenderer {
        nr.y = position.y;
        _stage.addChild(nr);
        _nodeRenderers.add(nr);
-       
     });
-        
-/*    for(Edge edge in _graph.edges) {
-      EdgeRenderer er = new EdgeRenderer(edge);
+       
+    _layout.eachEdge((springy.Edge edge){
+      EdgeRenderer er = new EdgeRenderer(edge, _layout);
       _stage.addChild(er);
-      _edgeRenderers.add(er);
-    }
-  */}
+      _edgeRenderers.add(er);      
+    });    
+  }
   
   focusOnNode(NodeRenderer nodeRenderer)
   {
@@ -192,16 +191,18 @@ class EdgeRenderer extends stagexl.Sprite {
   stagexl.Sprite line;
   springy.Edge _edge;
   
-  EdgeRenderer(springy.Edge _edge) {
+  EdgeRenderer(springy.Edge _edge, springy.Layout layout) {
     if(line != null){
       removeChild(line);
     }
     
+    springy.Vector sourcePosition = layout.position(_edge.source);
+    springy.Vector targetPosition = layout.position(_edge.target);
+    
     line = new stagexl.Sprite();
-        
     line.graphics.beginPath();
-    //line.graphics.moveTo(_edge.source.x, source.y);
-    //line.graphics.lineTo(_edge.target.x, target.y);
+    line.graphics.moveTo(sourcePosition.x, sourcePosition.y);
+    line.graphics.lineTo(targetPosition.x, targetPosition.y);
     line.graphics.strokeColor(stagexl.Color.Green);
     line.graphics.closePath(); 
     addChild(line);

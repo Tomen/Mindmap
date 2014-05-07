@@ -30,6 +30,13 @@ class Layout {
       fn(n, this.position(n));
     });
   }
+  
+  // callback should accept one argument: Edge
+  eachEdge(Function fn(Edge edge)) {
+    _graph.edges.forEach((Edge e){
+      fn(e);
+    });
+  }
 
   // Find the nearest point to a particular position
   nearest(pos) {
