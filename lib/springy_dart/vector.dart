@@ -5,7 +5,7 @@ class Vector {
   num x;
   num y;
   
-  Vector(x,y);
+  Vector(this.x, this.y);
 
   Vector.random(num xMax, num yMax) {
     this.x = xMax * (_random.nextDouble());
@@ -25,7 +25,10 @@ class Vector {
   }
 
   divide(n) {
-    return new Vector((this.x / n) || 0, (this.y / n) || 0); // Avoid divide by zero errors..
+    if(n == 0){
+      return new Vector(0, 0);
+    }
+    return new Vector(this.x / n, this.y / n); // Avoid divide by zero errors..
   }
 
   magnitude() {

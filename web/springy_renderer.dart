@@ -8,7 +8,7 @@ stagexl.DisplayObject draggedObject;
 num previousX;
 num previousY;
 
-class SpringyRenderer {
+class SpringyRenderer implements stagexl.Animatable{
   stagexl.Stage _stage;
   stagexl.Stage get stage => _stage;
   
@@ -18,6 +18,8 @@ class SpringyRenderer {
   springy.Graph get graph => _graph;
 
   springy.Layout _layout;
+  
+  springy.ForceDirector _forceDirector;
   
   List<NodeRenderer> _nodeRenderers = <NodeRenderer>[];
   List<EdgeRenderer> _edgeRenderers = <EdgeRenderer>[];
@@ -70,6 +72,16 @@ class SpringyRenderer {
     _layout = new springy.Layout(graph, canvas.clientWidth, canvas.clientHeight);
     
     renderGraph();
+    
+    _forceDirector = new springy.ForceDirector(_layout, 400, 400, 0.5);
+    
+    renderLoop.juggler.add(this);
+  }
+  
+  bool advanceTime(num time) {
+    _forceDirector.step();
+    renderGraph();
+    return true;
   }
   
   renderGraph() {
@@ -113,9 +125,7 @@ class SpringyRenderer {
     {
       nodeRenderer.isFocus = true;
     }
-  } 
-
-  
+  }
 }
 
 class NodeRenderer extends stagexl.Sprite

@@ -7,11 +7,16 @@ class ForceDirector {
   num stiffness; // spring stiffness constant
   num repulsion; // repulsion constant
   num damping; // velocity damping factor  
-  Map edgeSprings; // keep track of springs associated with edges
+  Map edgeSprings = {}; // keep track of springs associated with edges
 
   Map _nodePoints = {}; // keep track of points associated with nodes
 
-  ForceDirector(Layout _layout, num stiffness, num repulsion, num damping);
+  ForceDirector(Layout layout, num stiffness, num repulsion, num damping){
+    _layout = layout;
+    this.stiffness = stiffness;
+    this.repulsion = repulsion;
+    this.damping = damping;
+  }
 
   step() {
    this.applyCoulombsLaw();
@@ -59,7 +64,7 @@ class ForceDirector {
         }
       });
 
-      if (existingSpring != false) {
+      if (existingSpring != null) {
         return new Spring(existingSpring.point2, existingSpring.point1, 0.0, 0.0);
       }
 
