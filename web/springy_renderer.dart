@@ -1,7 +1,7 @@
 library mindmap_renderer;
 
 import 'package:stagexl/stagexl.dart' as stagexl;
-import "springy_dart.dart";
+import '../lib/springy_dart/springy_dart.dart';
 
 stagexl.DisplayObject draggedObject;
 num previousX;
@@ -15,23 +15,13 @@ class SpringyRenderer {
   
   Graph _graph;
   Graph get graph => _graph;
-  set graph (graph){
-    if(_graph != null) {
-      _graph.removeGraphListener(this);
-    }
-    
-    _graph = graph;  
 
-    if(_graph != null) {
-      renderGraph();
-      _graph.addGraphListener(this);
-    }
-  }
+  Layout _layout;
   
   List<NodeRenderer> _nodeRenderers = <NodeRenderer>[];
   List<EdgeRenderer> _edgeRenderers = <EdgeRenderer>[];
 
-  SpringyRenderer(var canvas){
+  SpringyRenderer(var canvas, Graph graph){
     
     _stage = new stagexl.Stage(canvas);
     _stage.doubleClickEnabled = true;
@@ -74,6 +64,11 @@ class SpringyRenderer {
     stage.onMouseUp.listen((stagexl.MouseEvent me){
       draggedObject = null;
     });  
+    
+    _graph = graph;
+    _layout = new Layout(graph);
+    
+    renderGraph();
   }
   
   renderGraph() {

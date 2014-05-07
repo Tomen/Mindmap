@@ -1,6 +1,6 @@
 import 'dart:html' as html;
-import "../lib/springy_dart.dart";
-import "../lib/springy_renderer.dart";
+import "../lib/springy_dart/springy_dart.dart";
+import "springy_renderer.dart";
 
 void main() {
   var canvas = html.querySelector('#stage');
