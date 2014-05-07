@@ -1,5 +1,6 @@
 library mindmap_renderer;
 
+import "dart:html";
 import 'package:stagexl/stagexl.dart' as stagexl;
 import '../lib/springy_dart/springy_dart.dart';
 
@@ -21,7 +22,7 @@ class SpringyRenderer {
   List<NodeRenderer> _nodeRenderers = <NodeRenderer>[];
   List<EdgeRenderer> _edgeRenderers = <EdgeRenderer>[];
 
-  SpringyRenderer(var canvas, Graph graph){
+  SpringyRenderer(CanvasElement canvas, Graph graph){
     
     _stage = new stagexl.Stage(canvas);
     _stage.doubleClickEnabled = true;
@@ -66,7 +67,7 @@ class SpringyRenderer {
     });  
     
     _graph = graph;
-    _layout = new Layout(graph);
+    _layout = new Layout(graph, canvas.clientWidth, canvas.clientHeight);
     
     renderGraph();
   }
@@ -83,18 +84,21 @@ class SpringyRenderer {
     _nodeRenderers.clear();
     _edgeRenderers.clear();
     
-    for(Node node in _graph.nodes) {
-      NodeRenderer nr = new NodeRenderer(node);
-      _stage.addChild(nr);
-      _nodeRenderers.add(nr);
-    }
+    _layout.eachNode((Node node, Point point){
+       NodeRenderer nr = new NodeRenderer(node);
+       nr.x = point.p.x;
+       nr.y = point.p.y;
+       _stage.addChild(nr);
+       _nodeRenderers.add(nr);
+       
+    });
         
-    for(Edge edge in _graph.edges) {
+/*    for(Edge edge in _graph.edges) {
       EdgeRenderer er = new EdgeRenderer(edge);
       _stage.addChild(er);
       _edgeRenderers.add(er);
     }
-  }
+  */}
   
   focusOnNode(NodeRenderer nodeRenderer)
   {

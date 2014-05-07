@@ -14,6 +14,5 @@ void main() {
       ['mark', 'other']
   ]);
   
-  SpringyRenderer renderer = new SpringyRenderer(canvas);
-  renderer.graph = graph;
+  SpringyRenderer renderer = new SpringyRenderer(canvas, graph);
 }

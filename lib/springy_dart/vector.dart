@@ -7,9 +7,9 @@ class Vector {
   
   Vector(x,y);
 
-  Vector.random() {
-    this.x = 10.0 * (_random.nextDouble() - 0.5);
-    this.y = 10.0 * (_random.nextDouble() - 0.5);
+  Vector.random(num xMax, num yMax) {
+    this.x = xMax * (_random.nextDouble());
+    this.y = yMax * (_random.nextDouble());
   }
 
   add(v2) {

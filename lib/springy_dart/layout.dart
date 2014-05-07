@@ -4,15 +4,21 @@ part of springy_dart;
 class Layout {
   Graph _graph;
   Graph get graph => _graph;
+  num _width;
+  num _height;
   
   Map _nodePoints = {}; // keep track of points associated with nodes
   
-  Layout(Graph graph);
+  Layout(Graph graph, num width, num height){
+    _graph = graph;
+    _width = width;
+    _height = height;
+  }
 
   Point point(node) {
     if (!_nodePoints.containsKey(node.id)) {
-      var mass = (node.data.mass != null) ? node.data.mass : 1.0;
-      _nodePoints[node.id] = new Point(new Vector.random(), mass);
+      var mass = (node.data["mass"] != null) ? node.data["mass"] : 1.0;
+      _nodePoints[node.id] = new Point(new Vector.random(_width, _height), mass);
     }
 
     return _nodePoints[node.id];
