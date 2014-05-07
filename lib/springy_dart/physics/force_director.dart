@@ -9,6 +9,8 @@ class ForceDirector {
   num damping; // velocity damping factor  
   Map edgeSprings; // keep track of springs associated with edges
 
+  Map _nodePoints = {}; // keep track of points associated with nodes
+
   ForceDirector(Layout _layout, num stiffness, num repulsion, num damping);
 
   step() {
@@ -24,6 +26,15 @@ class ForceDirector {
    }
   }
 
+  Point point(Node node) {
+    if (!_nodePoints.containsKey(node.id)) {
+      var mass = (node.data["mass"] != null) ? node.data["mass"] : 1.0;
+      _nodePoints[node.id] = new Point(_layout.position(node), mass);
+    }
+
+    return _nodePoints[node.id];
+  }
+  
   Spring spring(edge) {
     if (!this.edgeSprings.containsKey(edge.id)) {
       var length = (edge.data.length != null) ? edge.data.length : 1.0;
@@ -53,11 +64,18 @@ class ForceDirector {
       }
 
       this.edgeSprings[edge.id] = new Spring(
-        _layout.point(edge.source), _layout.point(edge.target), length, this.stiffness
+        point(edge.source), point(edge.target), length, this.stiffness
       );
     }
 
     return this.edgeSprings[edge.id];
+  }
+  
+  // callback should accept two arguments: Node, Point
+  eachNode(Function fn(Node node, Point point)) {
+    _layout.graph.nodes.forEach((Node n){
+      fn(n, this.point(n));
+    });
   }
 
   // callback should accept two arguments: Edge, Spring
@@ -77,8 +95,8 @@ class ForceDirector {
   
   // Physics stuff
   applyCoulombsLaw() {
-   _layout.eachNode((n1, point1) {
-     _layout.eachNode((n2, point2) {
+   this.eachNode((Node n1, Point point1) {
+     this.eachNode((Node n2, Point point2) {
        if (point1 != point2)
        {
          var d = point1.p.subtract(point2.p);
@@ -106,14 +124,14 @@ class ForceDirector {
   }
   
   attractToCentre() {
-   _layout.eachNode((node, point) {
+   this.eachNode((node, point) {
      var direction = point.p.multiply(-1.0);
      point.applyForce(direction.multiply(this.repulsion / 50.0));
    });
   }
   
   updateVelocity(timestep) {
-   _layout.eachNode((node, point) {
+   this.eachNode((node, point) {
      // Is this, along with updatePosition below, the only places that your
      // integration code exist?
      point.v = point.v.add(point.a.multiply(timestep)).multiply(this.damping);
@@ -122,7 +140,7 @@ class ForceDirector {
   }
   
   updatePosition(timestep) {
-   _layout.eachNode((node, point) {
+    this.eachNode((node, point) {
      // Same question as above; along with updateVelocity, is this all of
      // your integration code?
      point.p = point.p.add(point.v.multiply(timestep));
@@ -132,7 +150,7 @@ class ForceDirector {
   // Calculate the total kinetic energy of the system
   totalEnergy() {
    var energy = 0.0;
-   _layout.eachNode((node, point) {
+   this.eachNode((node, point) {
      var speed = point.v.magnitude();
      energy += 0.5 * point.m * speed * speed;
    });

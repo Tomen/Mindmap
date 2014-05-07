@@ -35,12 +35,12 @@ import "dart:convert";
 import "dart:math" as Math;
 
 part "edge.dart";
-part "force_director.dart";
+part "physics/force_director.dart";
 part "graph.dart";
 part "node.dart";
 part "layout.dart";
-part "point.dart";
+part "physics/point.dart";
 part "vector.dart";
-part "spring.dart";
+part "physics/spring.dart";
 
 Math.Random _random = new Math.Random();

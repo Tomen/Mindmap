@@ -2,7 +2,7 @@ library mindmap_renderer;
 
 import "dart:html";
 import 'package:stagexl/stagexl.dart' as stagexl;
-import '../lib/springy_dart/springy_dart.dart';
+import '../lib/springy_dart/springy_dart.dart' as springy;
 
 stagexl.DisplayObject draggedObject;
 num previousX;
@@ -14,15 +14,15 @@ class SpringyRenderer {
   
   NodeRenderer _focusedMeme;
   
-  Graph _graph;
-  Graph get graph => _graph;
+  springy.Graph _graph;
+  springy.Graph get graph => _graph;
 
-  Layout _layout;
+  springy.Layout _layout;
   
   List<NodeRenderer> _nodeRenderers = <NodeRenderer>[];
   List<EdgeRenderer> _edgeRenderers = <EdgeRenderer>[];
 
-  SpringyRenderer(CanvasElement canvas, Graph graph){
+  SpringyRenderer(CanvasElement canvas, springy.Graph graph){
     
     _stage = new stagexl.Stage(canvas);
     _stage.doubleClickEnabled = true;
@@ -67,7 +67,7 @@ class SpringyRenderer {
     });  
     
     _graph = graph;
-    _layout = new Layout(graph, canvas.clientWidth, canvas.clientHeight);
+    _layout = new springy.Layout(graph, canvas.clientWidth, canvas.clientHeight);
     
     renderGraph();
   }
@@ -84,10 +84,10 @@ class SpringyRenderer {
     _nodeRenderers.clear();
     _edgeRenderers.clear();
     
-    _layout.eachNode((Node node, Point point){
+    _layout.eachNode((springy.Node node, springy.Vector position){
        NodeRenderer nr = new NodeRenderer(node);
-       nr.x = point.p.x;
-       nr.y = point.p.y;
+       nr.x = position.x;
+       nr.y = position.y;
        _stage.addChild(nr);
        _nodeRenderers.add(nr);
        
@@ -121,7 +121,7 @@ class SpringyRenderer {
 
 class NodeRenderer extends stagexl.Sprite
 {    
-  Node _node;  
+  springy.Node _node;  
 
   //MindmapRenderer _mindmapRenderer;
   bool _isFocus;
@@ -132,7 +132,7 @@ class NodeRenderer extends stagexl.Sprite
   static final num boxX = -boxWidth/2;
   static final num boxY = -boxHeight/2;
   
-  NodeRenderer(Node node)//MindmapRenderer mindmapRenderer)
+  NodeRenderer(springy.Node node)//MindmapRenderer mindmapRenderer)
   { 
     //_mindmapRenderer = mindmapRenderer;
     _isFocus = false;
@@ -190,9 +190,9 @@ class NodeRenderer extends stagexl.Sprite
 
 class EdgeRenderer extends stagexl.Sprite {
   stagexl.Sprite line;
-  Edge _edge;
+  springy.Edge _edge;
   
-  EdgeRenderer(_edge) {
+  EdgeRenderer(springy.Edge _edge) {
     if(line != null){
       removeChild(line);
     }

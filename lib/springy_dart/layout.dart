@@ -7,7 +7,7 @@ class Layout {
   num _width;
   num _height;
   
-  Map _nodePoints = {}; // keep track of points associated with nodes
+  Map<dynamic, Vector> _nodePositions = {}; // keep track of points associated with nodes
   
   Layout(Graph graph, num width, num height){
     _graph = graph;
@@ -15,33 +15,31 @@ class Layout {
     _height = height;
   }
 
-  Point point(node) {
-    if (!_nodePoints.containsKey(node.id)) {
-      var mass = (node.data["mass"] != null) ? node.data["mass"] : 1.0;
-      _nodePoints[node.id] = new Point(new Vector.random(_width, _height), mass);
+  Vector position(Node node) {
+    if (!_nodePositions.containsKey(node.id)) {
+      _nodePositions[node.id] = new Vector.random(_width, _height);
     }
 
-    return _nodePoints[node.id];
+    return _nodePositions[node.id];
   }
 
 
   // callback should accept two arguments: Node, Point
-  eachNode(Function fn(Node node, Point point)) {
+  eachNode(Function fn(Node node, Vector position)) {
     _graph.nodes.forEach((Node n){
-      fn(n, this.point(n));
+      fn(n, this.position(n));
     });
   }
 
   // Find the nearest point to a particular position
   nearest(pos) {
     Map min = {"node": null, "point": null, "distance": null};
-    var t = this;
     _graph.nodes.forEach((Node n){
-      var point = t.point(n);
-      var distance = point.p.subtract(pos).magnitude();
+      var position = this.position(n);
+      var distance = position.subtract(pos).magnitude();
 
       if (!min.containsKey("distance") || distance < min["distance"]) {
-        min = {"node": n, "point": point, "distance": distance};
+        min = {"node": n, "point": position, "distance": distance};
       }
     });
 
@@ -53,18 +51,18 @@ class Layout {
     var bottomleft = new Vector(-2,-2);
     var topright = new Vector(2,2);
 
-    this.eachNode((n, point) {
-      if (point.p.x < bottomleft.x) {
-        bottomleft.x = point.p.x;
+    this.eachNode((n, position) {
+      if (position.x < bottomleft.x) {
+        bottomleft.x = position.x;
       }
-      if (point.p.y < bottomleft.y) {
-        bottomleft.y = point.p.y;
+      if (position.y < bottomleft.y) {
+        bottomleft.y = position.y;
       }
-      if (point.p.x > topright.x) {
-        topright.x = point.p.x;
+      if (position.x > topright.x) {
+        topright.x = position.x;
       }
-      if (point.p.y > topright.y) {
-        topright.y = point.p.y;
+      if (position.y > topright.y) {
+        topright.y = position.y;
       }
     });
 
