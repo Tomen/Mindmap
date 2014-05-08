@@ -16,7 +16,7 @@ class Point {
   }
 
   applyForce(force) {
-    this.a = this.a.add(force.divide(this.m));
+    this.a = a + force / this.m;
   }
 }
 

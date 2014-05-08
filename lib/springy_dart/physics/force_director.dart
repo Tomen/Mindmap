@@ -18,12 +18,12 @@ class ForceDirector {
     this.damping = damping;
   }
 
-  step() {
+  step(num time) {
    this.applyCoulombsLaw();
    this.applyHookesLaw();
    this.attractToCentre();
-   this.updateVelocity(0.03);
-   this.updatePosition(0.03);
+   this.updateVelocity(time/100);
+   this.updatePosition(time/100);
 
    // stop simulation when energy of the system goes below a threshold
    if (this.totalEnergy() < 0.01) {
@@ -34,7 +34,10 @@ class ForceDirector {
   Point point(Node node) {
     if (!_nodePoints.containsKey(node.id)) {
       var mass = (node.data["mass"] != null) ? node.data["mass"] : 1.0;
-      _nodePoints[node.id] = new Point(_layout.position(node), mass);
+      Vector position = _layout.position(node);
+      Point point = new Point(position, mass);
+      _nodePoints[node.id] = point;
+      print("Pointing node " + node.id.toString() + " with position hash " + position.hashCode.toString());
     }
 
     return _nodePoints[node.id];
@@ -97,13 +100,13 @@ class ForceDirector {
      this.eachNode((Node n2, Point point2) {
        if (point1 != point2)
        {
-         var d = point1.p.subtract(point2.p);
+         var d = point1.p - point2.p;
          var distance = d.magnitude() + 0.1; // avoid massive forces at small distances (and divide by zero)
          var direction = d.normalise();
   
          // apply force to each end point
-         point1.applyForce(direction.multiply(this.repulsion).divide(distance * distance * 0.5));
-         point2.applyForce(direction.multiply(this.repulsion).divide(distance * distance * -0.5));
+         point1.applyForce((direction * this.repulsion) / (distance * distance * 0.5));
+         point2.applyForce((direction * this.repulsion) / (distance * distance * -0.5));
        }
      });
    });
@@ -111,20 +114,20 @@ class ForceDirector {
   
   applyHookesLaw() {
    this.eachSpring((spring){
-     var d = spring.point2.p.subtract(spring.point1.p); // the direction of the spring
+     var d = spring.point2.p - spring.point1.p; // the direction of the spring
      var displacement = spring.length - d.magnitude();
      var direction = d.normalise();
   
      // apply force to each end point
-     spring.point1.applyForce(direction.multiply(spring.k * displacement * -0.5));
-     spring.point2.applyForce(direction.multiply(spring.k * displacement * 0.5));
+     spring.point1.applyForce(direction * (spring.k * displacement * -0.5));
+     spring.point2.applyForce(direction * (spring.k * displacement * 0.5));
    });
   }
   
   attractToCentre() {
    this.eachNode((node, point) {
-     var direction = point.p.multiply(-1.0);
-     point.applyForce(direction.multiply(this.repulsion / 50.0));
+     var direction = point.p * (-1.0);
+     point.applyForce(direction * (this.repulsion / 50.0));
    });
   }
   
@@ -132,7 +135,7 @@ class ForceDirector {
    this.eachNode((node, point) {
      // Is this, along with updatePosition below, the only places that your
      // integration code exist?
-     point.v = point.v.add(point.a.multiply(timestep)).multiply(this.damping);
+     point.v = point.v + (point.a * timestep) * this.damping;
      point.a = new Vector(0,0);
    });
   }
@@ -141,8 +144,11 @@ class ForceDirector {
     this.eachNode((node, point) {
      // Same question as above; along with updateVelocity, is this all of
      // your integration code?
-     point.p = point.p.add(point.v.multiply(timestep));
-   });
+     Vector p = point.p + point.v * timestep; 
+     point.p.x = p.x;
+     point.p.y = p.y;     
+     print("Physicing node " + node.id.toString() + " with position hash " + point.p.hashCode.toString());
+    });
   }
   
   // Calculate the total kinetic energy of the system

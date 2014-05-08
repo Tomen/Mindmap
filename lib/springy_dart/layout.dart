@@ -43,7 +43,7 @@ class Layout {
     Map min = {"node": null, "point": null, "distance": null};
     _graph.nodes.forEach((Node n){
       var position = this.position(n);
-      var distance = position.subtract(pos).magnitude();
+      var distance = (position - pos).magnitude();
 
       if (!min.containsKey("distance") || distance < min["distance"]) {
         min = {"node": n, "point": position, "distance": distance};
@@ -73,9 +73,9 @@ class Layout {
       }
     });
 
-    var padding = topright.subtract(bottomleft).multiply(0.07); // ~5% padding
+    var padding = (topright - bottomleft) * 0.07; // ~5% padding
 
-    return {bottomleft: bottomleft.subtract(padding), topright: topright.add(padding)};
+    return {bottomleft: bottomleft - padding, topright: topright + padding};
   }
 
 }
