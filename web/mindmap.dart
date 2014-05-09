@@ -11,7 +11,7 @@ void main() {
   graph.addEdges([
       ['mark', 'higgs'],
       ['mark', 'etc'],
-      ['mark', 'other']
+      ['etc', 'higgs']
   ]);
   
   SpringyRenderer renderer = new SpringyRenderer(canvas, graph);

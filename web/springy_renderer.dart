@@ -73,7 +73,7 @@ class SpringyRenderer implements stagexl.Animatable{
     
     renderGraph();
     
-    _forceDirector = new springy.ForceDirector(_layout, 400, 400, 0.5);
+    _forceDirector = new springy.ForceDirector(_layout, 100, 4000000, 0.5);
     
     renderLoop.juggler.add(this);
   }
@@ -98,7 +98,7 @@ class SpringyRenderer implements stagexl.Animatable{
     
     _layout.eachNode((springy.Node node, springy.Vector position){
        NodeRenderer nr = new NodeRenderer(node);
-       print("Rendering node " + node.id.toString() + " with position hash " + position.hashCode.toString());
+       //print("Rendering node " + node.id.toString() + " with position hash " + position.hashCode.toString());
        nr.x = position.x;
        nr.y = position.y;
        _stage.addChild(nr);
@@ -110,7 +110,7 @@ class SpringyRenderer implements stagexl.Animatable{
       _stage.addChild(er);
       _edgeRenderers.add(er);      
     });    
-    print("----------------------");
+    //print("----------------------");
   }
   
   focusOnNode(NodeRenderer nodeRenderer)

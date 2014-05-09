@@ -15,8 +15,8 @@ class Point {
     this.a = new Vector(0, 0);
   }
 
-  applyForce(force) {
-    this.a = a + force / this.m;
+  applyForce(Vector force) {
+    this.a = a + (force / this.m);
   }
 }
 

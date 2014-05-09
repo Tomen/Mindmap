@@ -8,6 +8,7 @@ class ForceDirector {
   num repulsion; // repulsion constant
   num damping; // velocity damping factor  
   Map edgeSprings = {}; // keep track of springs associated with edges
+  Vector center;
 
   Map _nodePoints = {}; // keep track of points associated with nodes
 
@@ -16,14 +17,15 @@ class ForceDirector {
     this.stiffness = stiffness;
     this.repulsion = repulsion;
     this.damping = damping;
+    center = new Vector(layout.width / 2, layout.height / 2);
   }
 
   step(num time) {
    this.applyCoulombsLaw();
    this.applyHookesLaw();
-   this.attractToCentre();
-   this.updateVelocity(time/100);
-   this.updatePosition(time/100);
+   //this.attractToCentre();
+   this.updateVelocity(time/10);
+   this.updatePosition(time/10);
 
    // stop simulation when energy of the system goes below a threshold
    if (this.totalEnergy() < 0.01) {
@@ -37,7 +39,7 @@ class ForceDirector {
       Vector position = _layout.position(node);
       Point point = new Point(position, mass);
       _nodePoints[node.id] = point;
-      print("Pointing node " + node.id.toString() + " with position hash " + position.hashCode.toString());
+      //print("Pointing node " + node.id.toString() + " with position hash " + position.hashCode.toString());
     }
 
     return _nodePoints[node.id];
@@ -45,13 +47,13 @@ class ForceDirector {
   
   Spring spring(edge) {
     if (!this.edgeSprings.containsKey(edge.id)) {
-      var length = (edge.data.length != null) ? edge.data.length : 1.0;
+      var length = (edge.data["length"] != null) ? edge.data["length"] : 50.0;
 
       var existingSpring = null;
 
       var from = _layout.graph.getEdges(edge.source, edge.target);
       from.forEach((Edge e) {
-        if (existingSpring == false && this.edgeSprings.containsKey(e.id)) {
+        if (existingSpring == null && this.edgeSprings.containsKey(e.id)) {
           existingSpring = this.edgeSprings[e.id];
         }
       });
@@ -62,7 +64,7 @@ class ForceDirector {
 
       var to = _layout.graph.getEdges(edge.target, edge.source);
       from.forEach((Edge e){
-        if (existingSpring == false && this.edgeSprings.containsKey(e.id)) {
+        if (existingSpring == null && this.edgeSprings.containsKey(e.id)) {
           existingSpring = this.edgeSprings[e.id];
         }
       });
@@ -126,7 +128,7 @@ class ForceDirector {
   
   attractToCentre() {
    this.eachNode((node, point) {
-     var direction = point.p * (-1.0);
+     var direction = center - point.p;
      point.applyForce(direction * (this.repulsion / 50.0));
    });
   }
@@ -147,7 +149,7 @@ class ForceDirector {
      Vector p = point.p + point.v * timestep; 
      point.p.x = p.x;
      point.p.y = p.y;     
-     print("Physicing node " + node.id.toString() + " with position hash " + point.p.hashCode.toString());
+     //print("Physicing node " + node.id.toString() + " with position hash " + point.p.hashCode.toString());
     });
   }
   

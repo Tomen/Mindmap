@@ -5,7 +5,9 @@ class Layout {
   Graph _graph;
   Graph get graph => _graph;
   num _width;
+  num get width => _width;
   num _height;
+  num get height => _height;
   
   Map<dynamic, Vector> _nodePositions = {}; // keep track of points associated with nodes
   
