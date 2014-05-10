@@ -25,12 +25,16 @@ class Graph {
   addNodes(List<String> arguments) {
      // accepts variable number of arguments, where each argument
      // is a string that becomes both node identifier and label
-     for (var i = 0; i < arguments.length; i++) {
-       var name = arguments[i];
-       var node = new Node(name, {"label":name});
-       this.addNode(node);
-     }
-   }
+    List<Node> nodes = [];
+    
+    for (var i = 0; i < arguments.length; i++) {
+      var name = arguments[i];
+      var node = new Node(name, {"label":name});
+      nodes.add(this.addNode(node));
+    }
+    
+    return nodes;
+  }
    
 
   Edge addEdge(Edge edge) {

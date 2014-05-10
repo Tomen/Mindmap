@@ -73,7 +73,7 @@ class SpringyRenderer implements stagexl.Animatable{
     
     renderGraph();
     
-    _forceDirector = new springy.ForceDirector(_layout, 100, 4000000, 0.5);
+    _forceDirector = new springy.ForceDirector(_layout, 400, 600, 0.5);
     
     renderLoop.juggler.add(this);
   }

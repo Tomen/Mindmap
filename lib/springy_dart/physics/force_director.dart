@@ -20,12 +20,14 @@ class ForceDirector {
     center = new Vector(layout.width / 2, layout.height / 2);
   }
 
-  step(num time) {
+  step(num time) {   
+   time = Math.min(time, 0.1);
+   
    this.applyCoulombsLaw();
    this.applyHookesLaw();
-   //this.attractToCentre();
-   this.updateVelocity(time/10);
-   this.updatePosition(time/10);
+   this.attractToCentre();
+   this.updateVelocity(time);
+   this.updatePosition(time);
 
    // stop simulation when energy of the system goes below a threshold
    if (this.totalEnergy() < 0.01) {
@@ -47,7 +49,7 @@ class ForceDirector {
   
   Spring spring(edge) {
     if (!this.edgeSprings.containsKey(edge.id)) {
-      var length = (edge.data["length"] != null) ? edge.data["length"] : 50.0;
+      var length = (edge.data["length"] != null) ? edge.data["length"] : 300.0;
 
       var existingSpring = null;
 
@@ -137,7 +139,7 @@ class ForceDirector {
    this.eachNode((node, point) {
      // Is this, along with updatePosition below, the only places that your
      // integration code exist?
-     point.v = point.v + (point.a * timestep) * this.damping;
+     point.v = (point.v + (point.a * timestep)) * this.damping;
      point.a = new Vector(0,0);
    });
   }
